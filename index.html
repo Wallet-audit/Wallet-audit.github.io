@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Wallet Audit — Crypto Address Compliance Review, Risk Scoring &amp; On-Chain Analysis (2026)</title>
+  <meta name="description" content="Wallet audit guide (2026): how to audit a crypto wallet address for compliance risk, what on-chain risk categories mean, VASP obligations, tool comparison, flagged address handling, and SAR filing. Practical, compliance-first.">
+  <meta name="author" content="Crypto Finance Experts">
+  <link rel="canonical" href="https://wallet-audit.example.com/">
+  <link rel="icon" type="image/png" href="Tornado.jpg">
+
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wallet-audit.example.com/">
+  <meta property="og:title" content="Wallet Audit — Crypto Address Compliance Review &amp; Risk Scoring (2026)">
+  <meta property="og:description" content="How to audit a crypto wallet for compliance risk: on-chain risk categories, VASP obligations, tool comparison, and handling flagged addresses.">
+  <meta property="og:image" content="cover.png">
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="Wallet Audit — Crypto Compliance Review &amp; Risk Scoring (2026)">
+  <meta property="twitter:description" content="Practical wallet audit guide: on-chain risk, VASP compliance, blockchain analytics tools, step-by-step workflow.">
+
+  <!-- Article Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Wallet Audit — Crypto Address Compliance Review, Risk Scoring & On-Chain Analysis (2026)",
+    "description": "How to audit a crypto wallet address for compliance risk: on-chain risk categories, VASP obligations, blockchain analytics tools, and troubleshooting.",
+    "author": { "@type": "Organization", "name": "Crypto Finance Experts", "url": "https://wallet-audit.example.com/" },
+    "publisher": { "@type": "Organization", "name": "Crypto Finance Experts" },
+    "datePublished": "2026-03-18",
+    "dateModified": "2026-03-18",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://wallet-audit.example.com/" }
+  }
+  </script>
+
+  <!-- BreadcrumbList Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://wallet-audit.example.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Compliance Guides", "item": "https://wallet-audit.example.com/guides/" },
+      { "@type": "ListItem", "position": 3, "name": "Wallet Audit", "item": "https://wallet-audit.example.com/wallet-audit/" }
+    ]
+  }
+  </script>
+
+  <!-- FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a crypto wallet audit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A crypto wallet audit is a structured compliance review of a blockchain address's on-chain transaction history. Using blockchain analytics tools, it traces fund flows to known entity clusters — exchanges, mixers, darknet markets, ransomware wallets, and OFAC-sanctioned addresses — and returns a risk score with a category breakdown. VASPs use wallet audits to fulfil transaction monitoring obligations under FATF Recommendation 15. Individuals use them to understand the risk profile of funds they are about to receive or have already received."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does a wallet audit take?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An automated wallet audit via a blockchain analytics API typically returns results in under two seconds for standard addresses. Manual dashboard audits take 2–5 minutes per address including reading the category breakdown. Complex forensic audits involving deep graph tracing across multiple hops and chains can take hours to days for trained analysts. For VASP compliance purposes, real-time API integration is the standard — manual dashboard checks cannot scale to high transaction volumes."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      /* Deep Copper / Slate Blue */
+      --primary: #92400E;
+      --primary-600: #78350F;
+      --primary-700: #5C2706;
+      --accent: #FBBF24;
+      --accent-soft: #FDE68A;
+
+      --ink: #FFFBEB;
+      --muted: #A1A1AA;
+      --muted-2: #71717A;
+
+      --bg: #080400;
+      --panel: #120800;
+      --panel-2: #1A0D00;
+      --line: rgba(255,255,255,.10);
+
+      --ok: #22C55E;
+      --warn: #F59E0B;
+      --error: #EF4444;
+
+      --shadow: 0 18px 44px rgba(0,0,0,.60);
+      --radius: 14px;
+      --radius-lg: 22px;
+      --gap: 1.25rem;
+      --gap-lg: 2rem;
+    }
+
+    * { box-sizing: border-box }
+    html, body { height: 100% }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      color: var(--muted);
+      background:
+        radial-gradient(900px 600px at 12% 0%,  rgba(146,64,14,.22), transparent 60%),
+        radial-gradient(900px 600px at 88% 12%, rgba(251,191,36,.07), transparent 60%),
+        radial-gradient(900px 600px at 50% 90%, rgba(120,53,15,.16), transparent 60%),
+        linear-gradient(180deg, #060300 0%, #080400 50%, #060300 100%);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none }
+    a:hover { text-decoration: underline }
+    img { max-width: 100%; height: auto; display: block }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.25rem }
+
+    h1,h2,h3,h4 { color: var(--ink); line-height: 1.25; margin: 0 0 .6rem }
+    h1 { font-size: clamp(2rem,4.5vw,3.1rem); font-weight: 950; letter-spacing: .2px }
+    h2 { font-size: clamp(1.35rem,2.8vw,2rem); margin-top: 2.2rem; padding-top: .6rem; border-top: 1px solid var(--line) }
+    h3 { font-size: clamp(1.05rem,2.2vw,1.3rem); color: var(--accent-soft) }
+    p,li,td,th { font-size: 1rem }
+    .lead { font-size: 1.125rem; color: #FEF3C7 }
+    .muted { color: var(--muted) }
+    .muted-2 { color: var(--muted-2) }
+
+    /* Breadcrumb */
+    .breadcrumb { padding: .7rem 0; font-size: .85rem; color: var(--muted-2) }
+    .breadcrumb a { color: var(--muted); font-weight: 600 }
+    .breadcrumb a:hover { color: var(--accent) }
+    .breadcrumb span { margin: 0 .4rem; opacity: .5 }
+
+    /* Meta bar */
+    .meta-bar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: .75rem; font-size: .83rem; color: var(--muted-2) }
+    .meta-bar time { font-weight: 700; color: var(--accent-soft) }
+
+    header.hero {
+      padding: clamp(2rem,6vw,4rem) 0;
+      background:
+        radial-gradient(700px 420px at 18% 10%, rgba(146,64,14,.26), transparent 60%),
+        radial-gradient(700px 420px at 90% 20%, rgba(251,191,36,.09), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.03), transparent 55%);
+      border-bottom: 1px solid var(--line);
+    }
+    .hero-grid { display: grid; gap: var(--gap-lg); grid-template-columns: 1fr }
+    .hero-card {
+      background: linear-gradient(180deg, rgba(20,10,0,.88), rgba(14,6,0,.72));
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: clamp(1rem,3vw,1.75rem);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+    .brand-row { display: flex; align-items: center; gap: .9rem; margin-bottom: .75rem }
+    .brand-logo {
+      width: 54px; height: 54px; border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      padding: .35rem; object-fit: contain;
+      box-shadow: 0 10px 22px rgba(0,0,0,.40);
+      flex: 0 0 auto;
+    }
+
+    /* CTA */
+    .cta-wrap { display: flex; justify-content: center; margin-top: 1.5rem }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #B45309 0%, #92400E 55%, #D97706 100%);
+      color: #fff;
+      padding: 1.05rem 3rem;
+      border-radius: 14px;
+      font-weight: 900;
+      font-size: 1.15rem;
+      letter-spacing: .4px;
+      box-shadow:
+        0 0 0 1px rgba(251,191,36,.28),
+        0 8px 24px rgba(146,64,14,.50),
+        0 20px 48px rgba(146,64,14,.22);
+      border: 1px solid rgba(255,255,255,.18);
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .cta:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow:
+        0 0 0 2px rgba(251,191,36,.45),
+        0 12px 32px rgba(146,64,14,.60),
+        0 28px 60px rgba(146,64,14,.28);
+      filter: brightness(1.1);
+      text-decoration: none;
+    }
+
+    .note {
+      border-left: 3px solid var(--accent);
+      padding: .75rem 1rem;
+      background: rgba(251,191,36,.07);
+      border-radius: 10px;
+      color: #FEF3C7;
+    }
+
+    section.step-guide { padding: clamp(2rem,6vw,3.5rem) 0 }
+    .steps { display: grid; gap: var(--gap); grid-template-columns: 1fr }
+    .step {
+      background: linear-gradient(180deg, rgba(20,10,0,.82), rgba(14,6,0,.66));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      box-shadow: 0 12px 26px rgba(0,0,0,.50);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .step:hover { transform: translateY(-4px); box-shadow: 0 18px 34px rgba(0,0,0,.60) }
+    .step .icon {
+      width: 54px; height: 54px; border-radius: 50%;
+      display: inline-grid; place-items: center;
+      background: rgba(146,64,14,.22);
+      margin-bottom: .6rem; color: var(--accent-soft);
+      font-weight: 950;
+      border: 1px solid rgba(255,255,255,.10);
+    }
+
+    main .card {
+      background: linear-gradient(180deg, rgba(20,10,0,.74), rgba(14,6,0,.60));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+      box-shadow: 0 12px 26px rgba(0,0,0,.50);
+    }
+
+    .grid-2 { display: grid; gap: var(--gap); grid-template-columns: 1fr }
+    .pillbar { display: flex; flex-wrap: wrap; gap: .6rem; margin: .75rem 0 0 }
+    .pill { border: 1px solid var(--line); background: rgba(255,255,255,.05); padding: .4rem .65rem; border-radius: 999px; font-weight: 800; color: #FEF3C7 }
+
+    .toc { border: 1px solid var(--line); background: linear-gradient(180deg, rgba(146,64,14,.10), rgba(255,255,255,.02)); border-radius: var(--radius); padding: 1rem }
+    .toc strong { color: var(--ink) }
+    .toc ul { margin: .5rem 0 0; padding-left: 1.1rem }
+    .toc li { margin: .25rem 0 }
+    .toc a { font-weight: 800; color: var(--accent) }
+
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 12px }
+    th,td { padding: .9rem; border-bottom: 1px solid var(--line) }
+    th { background: rgba(146,64,14,.12); color: var(--ink); text-align: left }
+    tr.highlight { background: rgba(146,64,14,.08) }
+    tr:hover { background: rgba(255,255,255,.03) }
+
+    .ok { color: var(--ok) } .warn { color: var(--warn) } .err { color: var(--error) }
+
+    .eeat { background: linear-gradient(180deg, rgba(146,64,14,.10), rgba(255,255,255,.02)); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; box-shadow: 0 12px 26px rgba(0,0,0,.50) }
+
+    .faq-item { border-bottom: 1px solid var(--line); padding: .9rem 0 }
+    .faq-button { all: unset; display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; padding: .3rem 0 }
+    .faq-button:focus-visible { outline: 2px solid var(--accent) }
+    .faq-button h3 { margin: 0; font-weight: 950 }
+    .faq-content { max-height: 0; overflow: hidden; transition: max-height .28s ease }
+    .faq-content.open { padding-top: .6rem }
+    .faq-plus { font-weight: 950; color: var(--accent-soft); font-size: 1.1rem; flex-shrink: 0; margin-left: .75rem }
+
+    .callout-grid { display: grid; gap: var(--gap); grid-template-columns: 1fr; margin-top: .75rem }
+    .mini { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem }
+    .mini h3 { margin-bottom: .35rem }
+    .kpi-badges { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .5rem }
+    .kpi-badges span { border: 1px solid rgba(146,64,14,.28); background: rgba(146,64,14,.12); color: var(--accent-soft); padding: .3rem .55rem; border-radius: 999px; font-weight: 900; font-size: .9rem }
+
+    /* Stats */
+    .stat-block { display: flex; flex-wrap: wrap; gap: var(--gap); margin: 1rem 0 }
+    .stat { flex: 1; min-width: 140px; background: rgba(146,64,14,.10); border: 1px solid rgba(251,191,36,.16); border-radius: var(--radius); padding: .9rem 1rem; text-align: center }
+    .stat-num { display: block; font-size: 1.75rem; font-weight: 950; color: var(--accent); line-height: 1.1 }
+    .stat-lbl { font-size: .82rem; color: var(--muted); margin-top: .25rem }
+
+    /* Risk bars */
+    .risk-row { display: flex; align-items: center; gap: .75rem; margin: .4rem 0 }
+    .risk-lbl { min-width: 90px; font-size: .85rem; font-weight: 700; color: var(--accent-soft) }
+    .risk-track { flex: 1; height: 6px; background: rgba(255,255,255,.08); border-radius: 99px; overflow: hidden }
+    .risk-fill { height: 100%; border-radius: 99px }
+    .risk-fill.low  { background: linear-gradient(90deg,#15803D,#22C55E); width: 25% }
+    .risk-fill.med  { background: linear-gradient(90deg,#B45309,#F59E0B); width: 55% }
+    .risk-fill.high { background: linear-gradient(90deg,#7F1D1D,#EF4444); width: 88% }
+    .risk-val { min-width: 55px; text-align: right; font-size: .82rem; font-weight: 800 }
+
+    @media (min-width: 860px) {
+      .steps { grid-template-columns: repeat(4,1fr) }
+      .grid-2 { grid-template-columns: 1fr 1fr }
+      .callout-grid { grid-template-columns: 1fr 1fr }
+    }
+  </style>
+</head>
+<body>
+
+<header class="hero" role="banner">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/guides/">Compliance Guides</a><span>›</span>
+      <span aria-current="page">Wallet Audit</span>
+    </nav>
+
+    <div class="hero-grid">
+      <div class="hero-card" aria-label="Intro">
+        <div class="meta-bar">
+          <span>By <strong>Crypto Finance Experts</strong></span>
+          <span>·</span>
+          <time datetime="2026-03-18">March 18, 2026</time>
+          <span>·</span>
+          <span>9 min read</span>
+        </div>
+
+        <div class="brand-row">
+          <img class="brand-logo" src="Tornado.jpg" alt="Wallet audit compliance reference">
+          <div>
+            <div class="muted" style="font-weight:900;letter-spacing:.2px;">Operational Guide</div>
+            <div class="muted-2" style="font-size:.95rem;">On-Chain Risk Review&nbsp;•&nbsp;VASP Compliance&nbsp;•&nbsp;KYC/AML&nbsp;•&nbsp;Transaction Monitoring</div>
+          </div>
+        </div>
+
+        <h1>Wallet Audit</h1>
+        <p class="lead">
+          A practical guide to auditing crypto wallet addresses for compliance risk:
+          how analytics tools trace on-chain exposure, what risk categories mean,
+          when a wallet audit is legally required, and how to handle a flagged result —
+          whether you operate a VASP or are checking a counterparty before a large transfer.
+        </p>
+
+        <div class="cta-wrap">
+          <a href="https://en.wikipedia.org/wiki/Cryptocurrency_tumbler"
+             class="cta" target="_blank" rel="noopener" aria-label="Wallet Audit">
+            Wallet Audit
+          </a>
+        </div>
+
+        <div class="note" style="margin-top:1.25rem;">
+          <strong>Key principle:</strong> A wallet audit produces a risk signal, not a verdict.
+          The category breakdown matters more than the headline score —
+          direct mixer exposure at one hop is a compliance problem;
+          the same score driven by indirect P2P contact at three hops is a documentation exercise.
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="step-guide" aria-labelledby="workflow-title">
+  <div class="container">
+    <h2 id="workflow-title">Wallet Audit Workflow: Collect → Analyse → Classify → Act</h2>
+    <div class="steps" role="list">
+      <article class="step" role="listitem">
+        <div class="icon">①</div>
+        <h3>Collect address and confirm chain</h3>
+        <p>Gather the wallet address, confirm the blockchain (BTC, ETH, Tron, Solana…), and note the context — deposit, withdrawal, or counterparty check. Chain coverage varies by tool.</p>
+      </article>
+      <article class="step" role="listitem">
+        <div class="icon">②</div>
+        <h3>Submit to blockchain analytics</h3>
+        <p>Run the query via API or dashboard. The tool maps fund flows to known entity clusters — exchanges, tumblers, darknet markets, ransomware groups, sanctioned wallets — and returns a scored report.</p>
+      </article>
+      <article class="step" role="listitem">
+        <div class="icon">③</div>
+        <h3>Classify by category, not just score</h3>
+        <p>Read the exposure breakdown first. Sanction exposure requires immediate action regardless of score. Category type and hop distance determine the appropriate compliance response.</p>
+      </article>
+      <article class="step" role="listitem">
+        <div class="icon">④</div>
+        <h3>Act, document, build the audit trail</h3>
+        <p>Apply your risk policy, record the decision and its rationale, and save the report with timestamp. Regulators inspect the decision-making process — the audit trail is the compliance deliverable.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<main class="container" role="main">
+<article>
+
+  <section class="card toc" aria-label="Table of Contents">
+    <strong>On this page (Wallet Audit):</strong>
+    <ul>
+      <li><a href="#overview">What a wallet audit is and who needs one</a></li>
+      <li><a href="#stats">Illicit crypto activity: key figures (2024–2026)</a></li>
+      <li><a href="#how-it-works">How a wallet audit traces on-chain risk</a></li>
+      <li><a href="#risk-categories">Wallet audit risk categories explained</a></li>
+      <li><a href="#legal">When a wallet audit is legally required</a></li>
+      <li><a href="#how-to">How to run a wallet audit: step-by-step</a></li>
+      <li><a href="#tools">Wallet audit tool comparison</a></li>
+      <li><a href="#flagged">Handling a flagged wallet audit result</a></li>
+      <li><a href="#comparison">Manual vs automated wallet audit</a></li>
+      <li><a href="#best-practices">Best practices for wallet audit programmes</a></li>
+      <li><a href="#troubleshooting">Troubleshooting wallet audit issues</a></li>
+      <li><a href="#eeat">Sources &amp; references</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </section>
+
+  <section class="card" id="overview">
+    <h2>What a Wallet Audit Is — and Who Needs One</h2>
+    <p>
+      A wallet audit is a structured compliance review of a blockchain address's on-chain
+      transaction history. Analytics tools trace fund flows to known entity clusters and
+      return a risk score with a category breakdown — identifying exposure to mixers,
+      darknet markets, ransomware operators, and OFAC-sanctioned wallets.
+    </p>
+
+    <div class="pillbar">
+      <span class="pill">On-Chain Risk Analysis</span>
+      <span class="pill">KYC/AML</span>
+      <span class="pill">VASP Compliance</span>
+      <span class="pill">Transaction Monitoring</span>
+      <span class="pill">CTF Screening</span>
+    </div>
+
+    <div class="callout-grid" role="list">
+      <div class="mini" role="listitem">
+        <h3>Legally required for VASPs</h3>
+        <p class="muted">Exchanges, custodians, OTC desks, and fiat on-ramps face AML obligations under FATF Recommendation 15 requiring transaction monitoring equivalent to traditional financial institutions. FATF guidance at <a href="https://www.fatf-gafi.org/en/publications/Fatfrecommendations/Guidance-RBA-virtual-assets-2021.html" target="_blank" rel="noopener nofollow">fatf-gafi.org</a>.</p>
+        <div class="kpi-badges"><span>Exchanges</span><span>Custodians</span><span>OTC desks</span></div>
+      </div>
+      <div class="mini" role="listitem">
+        <h3>Useful for voluntary checks</h3>
+        <p class="muted">DeFi treasuries, DAOs, and individuals expecting large inbound transfers benefit from auditing counterparty wallets proactively. Receiving tainted funds can trigger asset freezes even without intent.</p>
+        <div class="kpi-badges"><span>DeFi treasuries</span><span>DAOs</span><span>Individual users</span></div>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:1rem;">
+      <strong>Operational framing:</strong> A wallet audit is not about presuming guilt — it is about understanding fund provenance to meet legal obligations and protect your organisation from processing criminal proceeds.
+    </div>
+  </section>
+
+  <section class="card" id="stats">
+    <h2>Wallet Audit Context: Illicit Crypto Activity by the Numbers (2024–2026)</h2>
+
+    <div class="stat-block" aria-label="Key illicit activity statistics">
+      <div class="stat">
+        <span class="stat-num">$24.2B</span>
+        <div class="stat-lbl">Illicit crypto transactions in 2023<br><small>Chainalysis 2024 Report</small></div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">$11.5B</span>
+        <div class="stat-lbl">Sent to sanctioned entities<br><small>Largest single illicit category</small></div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">1.7M+</span>
+        <div class="stat-lbl">Unique illicit wallet addresses<br><small>Across all tracked chains</small></div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">72%</span>
+        <div class="stat-lbl">Illicit crypto passing through VASPs<br><small>FATF 2024 evaluation rounds</small></div>
+      </div>
+    </div>
+
+    <div class="note">
+      The 72% figure explains why regulators focus on VASP transaction monitoring as the primary AML chokepoint in crypto. Full data at <a href="https://www.chainalysis.com/reports/crypto-crime-report/" target="_blank" rel="noopener nofollow">chainalysis.com/reports</a>.
+    </div>
+  </section>
+
+  <section class="card" id="how-it-works">
+    <h2>How a Wallet Audit Traces On-Chain Risk</h2>
+    <p>
+      Analytics platforms maintain entity databases built by clustering addresses they
+      believe share a common owner — using common-input ownership heuristics, deposit
+      patterns, law enforcement intelligence, and OSINT.
+      When you submit an address for audit, the tool measures how many hops
+      it is from known illicit clusters and weights the exposure by volume.
+    </p>
+
+    <div class="callout-grid">
+      <div class="mini">
+        <h3>Direct vs indirect exposure</h3>
+        <p class="muted"><strong>Direct (1 hop):</strong> your wallet transacted with a known illicit entity. <strong>Indirect (2+ hops):</strong> a counterparty of yours did. Tools weight these very differently — direct interaction with a <a href="https://en.wikipedia.org/wiki/Cryptocurrency_tumbler" target="_blank" rel="noopener nofollow">cryptocurrency tumbler</a> is a serious flag; the same wallet connected via three hops through a regulated exchange produces a near-zero risk contribution.</p>
+        <div class="kpi-badges"><span>1 hop = direct</span><span>2+ hops = indirect</span><span>Distance × volume</span></div>
+      </div>
+      <div class="mini">
+        <h3>Inherent limitations</h3>
+        <p class="muted">Heuristic clustering is probabilistic, not deterministic. False positives occur for CoinJoin users, shared exchange hot wallets, and multi-sig setups. Risk scores are inputs to compliance decisions, not conclusions. Every high-risk result should receive human analyst review before adverse action.</p>
+        <div class="kpi-badges"><span>Probabilistic</span><span>False positives exist</span><span>Analyst review needed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="risk-categories">
+    <h2>Wallet Audit Risk Categories: What Each Label Means</h2>
+
+    <div style="margin:.75rem 0">
+      <div class="risk-row"><span class="risk-lbl">Low (0–25)</span><div class="risk-track"><div class="risk-fill low"></div></div><span class="risk-val ok">Proceed</span></div>
+      <div class="risk-row"><span class="risk-lbl">Medium (26–74)</span><div class="risk-track"><div class="risk-fill med"></div></div><span class="risk-val warn">EDD</span></div>
+      <div class="risk-row"><span class="risk-lbl">High (75–100)</span><div class="risk-track"><div class="risk-fill high"></div></div><span class="risk-val err">Block / SAR</span></div>
+    </div>
+
+    <table aria-label="Wallet audit risk categories">
+      <thead>
+        <tr><th>Category</th><th>Severity</th><th>Compliance response</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td><strong>Sanctioned entity (OFAC SDN)</strong></td>
+          <td class="err">Critical</td>
+          <td>Immediate block; SAR mandatory for US-nexus VASPs</td>
+        </tr>
+        <tr>
+          <td><strong>Mixer / tumbler</strong></td>
+          <td class="err">High</td>
+          <td>Block above volume threshold; source-of-funds request; possible SAR</td>
+        </tr>
+        <tr class="highlight">
+          <td><strong>Darknet market</strong></td>
+          <td class="err">High</td>
+          <td>Block; SAR filing strongly recommended</td>
+        </tr>
+        <tr>
+          <td><strong>Ransomware</strong></td>
+          <td class="err">High</td>
+          <td>Block; SAR; paying ransomware may be prohibited in some jurisdictions</td>
+        </tr>
+        <tr class="highlight">
+          <td><strong>Fraud / scam</strong></td>
+          <td class="warn">Medium–High</td>
+          <td>Assess victim vs participant; enhanced review; consider SAR</td>
+        </tr>
+        <tr>
+          <td><strong>Unregulated P2P exchange</strong></td>
+          <td class="warn">Medium</td>
+          <td>Enhanced due diligence; source-of-funds documentation</td>
+        </tr>
+        <tr class="highlight">
+          <td><strong>Gambling</strong></td>
+          <td class="warn">Low–Medium</td>
+          <td>Jurisdiction-dependent; document; assess volume</td>
+        </tr>
+        <tr>
+          <td><strong>Regulated exchange</strong></td>
+          <td class="ok">Low</td>
+          <td>Proceed; standard monitoring</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <strong>Calibration rule:</strong> Build a category-response matrix before configuring any tool threshold. Sanctions exposure requires automatic blocking regardless of overall score. Indirect P2P at three hops may only require documentation.
+    </div>
+  </section>
+
+  <section class="card" id="legal">
+    <h2>When a Wallet Audit Is Legally Required</h2>
+    <ul>
+      <li><strong>FATF Recommendation 15 (global):</strong> VASPs must apply ongoing transaction monitoring — which in practice means auditing counterparty wallets. Full text at <a href="https://www.fatf-gafi.org/en/publications/Fatfrecommendations/Recommendations.html" target="_blank" rel="noopener nofollow">fatf-gafi.org</a>.</li>
+      <li><strong>EU Transfer of Funds Regulation (TFR, 2023):</strong> no minimum threshold — all transfers require originator and beneficiary data, embedding wallet audit into every transaction.</li>
+      <li><strong>US Bank Secrecy Act / FinCEN:</strong> MSBs dealing in virtual currency must file SARs and comply with OFAC screening. Guidance at <a href="https://www.fincen.gov/resources/statutes-regulations/guidance/application-fincens-regulations-certain-business-models" target="_blank" rel="noopener nofollow">fincen.gov</a>.</li>
+      <li><strong>UK FCA:</strong> cryptoasset businesses registered under the Money Laundering Regulations 2017 must conduct ongoing monitoring equivalent to regulated financial services.</li>
+    </ul>
+
+    <div class="note">
+      <strong>DeFi grey area:</strong> Truly decentralised protocols without a central operator currently sit in a regulatory grey area in most jurisdictions — but that area is narrowing.
+    </div>
+  </section>
+
+  <section class="card" id="how-to">
+    <h2>How to Run a Wallet Audit: Step-by-Step</h2>
+    <ol>
+      <li><strong>Confirm the blockchain</strong> — BTC, ETH, Tron, Solana, etc. Most tools auto-detect, but verify: misidentified chains return incomplete results.</li>
+      <li><strong>Select the right tool</strong> for your volume and chain mix. Enterprise platforms (Chainalysis KYT, Elliptic Navigator) for large exchanges; TRM Labs or Crystal for mid-market VASPs.</li>
+      <li><strong>Submit the query and retrieve the full report</strong> — not just the score. Save the category breakdown, hop distances, and entity names as your compliance documentation.</li>
+      <li><strong>Read the category breakdown first.</strong> A 2% direct sanction exposure at a score of 30 still requires immediate action. The category type overrides the aggregate score.</li>
+      <li><strong>Apply your documented risk policy.</strong> Tier responses — proceed, EDD, block — must be defined before the audit event, not written around the output.</li>
+      <li><strong>Record the complete decision trail:</strong> address, date/time, tool, report reference, score, categories, your assessment, action taken, policy citation.</li>
+      <li><strong>Schedule re-audits</strong> for ongoing relationships — quarterly minimum for standard-risk counterparties.</li>
+    </ol>
+
+    <div class="note">
+      <strong>Integration principle:</strong> Build wallet audits into deposit and withdrawal workflows as automated API calls. Manual checks do not scale and create systematic coverage gaps.
+    </div>
+  </section>
+
+  <section class="card" id="tools">
+    <h2>Wallet Audit Tool Comparison: Coverage and Strengths</h2>
+
+    <table aria-label="Wallet audit tool comparison">
+      <thead>
+        <tr><th>Provider</th><th>Chain coverage</th><th>Key strength</th><th>Best for</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td><strong>Chainalysis KYT</strong></td>
+          <td>BTC, ETH, Tron, SOL, 20+</td>
+          <td>Broadest entity database; law enforcement track record</td>
+          <td>Large exchanges; financial institutions</td>
+        </tr>
+        <tr>
+          <td><strong>Elliptic Navigator</strong></td>
+          <td>BTC, ETH, DeFi, cross-chain</td>
+          <td>Strong DeFi and cross-chain coverage</td>
+          <td>DeFi protocols; multi-asset fintechs</td>
+        </tr>
+        <tr class="highlight">
+          <td><strong>TRM Labs</strong></td>
+          <td>30+ chains (SOL, AVAX, NEAR…)</td>
+          <td>Wide chain support; competitive pricing</td>
+          <td>Mid-market VASPs; neobanks</td>
+        </tr>
+        <tr>
+          <td><strong>Crystal Blockchain</strong></td>
+          <td>BTC, ETH, ERC-20, LTC</td>
+          <td>Detailed BTC tracing; EU compliance templates</td>
+          <td>European VASPs; BTC-focused teams</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      No single tool covers all chains equally. For high-stakes wallet audits, running the address through two providers and comparing outputs is sound practice. Methodology docs: <a href="https://www.chainalysis.com/reports/crypto-crime-report/" target="_blank" rel="noopener nofollow">Chainalysis</a> · <a href="https://www.elliptic.co/resources" target="_blank" rel="noopener nofollow">Elliptic</a>.
+    </div>
+  </section>
+
+  <section class="card" id="flagged">
+    <h2>Handling a Flagged Wallet Audit Result</h2>
+
+    <h3>If your own wallet is flagged</h3>
+    <ul>
+      <li>Request the specific exposure category in writing — "compliance system" is not an adequate explanation.</li>
+      <li>Gather source-of-funds documentation: exchange withdrawal records, bank statements, OTC desk receipts.</li>
+      <li>Run the address on a second analytics tool to verify whether the flag is credible or a potential false positive.</li>
+      <li>Submit a formal dispute with supporting evidence — most regulated exchanges clear legitimate false positives within 5–10 business days.</li>
+    </ul>
+
+    <h3>If you are the operator</h3>
+    <ul>
+      <li>Document the category breakdown and your policy basis before blocking. "Tool score = 80" alone is not sufficient.</li>
+      <li>Notify the user that their account is restricted without disclosing any SAR — tipping off is prohibited in most jurisdictions.</li>
+      <li>File any required SAR with your jurisdiction's FIU (FinCEN for US; NCA for UK) before releasing or blocking funds where the obligation applies.</li>
+    </ul>
+
+    <div class="note">
+      <strong>Hard rule:</strong> Never take adverse action based on a risk score alone without reviewing the category breakdown. Blocking on medium scores without human review generates avoidable false positives.
+    </div>
+  </section>
+
+  <section class="card" id="comparison">
+    <h2>Manual vs Automated Wallet Audit: Choosing the Right Approach</h2>
+
+    <table aria-label="Wallet audit method comparison">
+      <thead>
+        <tr><th>Method</th><th>Best for</th><th>Pros</th><th>Cons</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td><strong>Manual (dashboard)</strong></td>
+          <td>Low volume; investigations; spot checks</td>
+          <td>No integration; analyst context; flexible</td>
+          <td>Doesn't scale; gaps under pressure</td>
+        </tr>
+        <tr>
+          <td><strong>Batch screening</strong></td>
+          <td>Periodic review of existing user wallets</td>
+          <td>Covers existing book; catches new attribution</td>
+          <td>Lagging — not real-time</td>
+        </tr>
+        <tr class="highlight">
+          <td><strong>Real-time API</strong></td>
+          <td>Exchanges; payment processors; high-volume VASPs</td>
+          <td>Every transaction audited; automated flow; full log</td>
+          <td>Integration cost; requires codified policy</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      Any regulated VASP processing more than a few hundred transactions per day needs real-time API wallet auditing. Manual review at scale is not a compliance programme — it is a documentation liability.
+    </div>
+  </section>
+
+  <section class="card" id="best-practices">
+    <h2>Best Practices for Running a Wallet Audit Programme</h2>
+    <ul>
+      <li><strong>Write your category-response matrix before configuring any tool.</strong> Which category at which hop distance triggers which response — proceed, EDD, block, SAR. Vendor defaults are a starting point, not a compliance policy.</li>
+      <li><strong>Audit on deposit and withdrawal, not just onboarding.</strong> Ongoing transaction monitoring is the FATF standard. A wallet clean at signup can interact with a mixer months later.</li>
+      <li><strong>Train analysts to read category breakdowns, not just scores.</strong> Proportionate decisions require understanding hop distance, clustering heuristics, and category weighting.</li>
+      <li><strong>Document every decision with specific policy citations.</strong> "Tool score = 82, policy §4.3 requires block at &gt;75 for mixer exposure" is defensible. "Tool flagged it" is not.</li>
+      <li><strong>Measure your false positive rate quarterly.</strong> Above 10–15% cleared accounts suggests miscalibrated thresholds. Adjust the matrix, not the tool.</li>
+    </ul>
+
+    <div class="note">
+      <strong>Most common mistake:</strong> Treating a high score as conclusive without reviewing the category breakdown. A wallet can score 80 with zero direct illicit exposure — driven entirely by indirect connections at four hops. Read what the score is made of before acting.
+    </div>
+  </section>
+
+  <section class="card" id="troubleshooting">
+    <h2>Troubleshooting Common Wallet Audit Issues</h2>
+
+    <h3>"High score on a wallet that's never touched a mixer"</h3>
+    <ul>
+      <li>Indirect exposure at 1–2 hops can still produce elevated scores. Run the address on a second tool and compare the category breakdown. If funds came from a regulated exchange, request a certificate of withdrawal.</li>
+    </ul>
+
+    <h3>"Score changed without any new on-chain activity"</h3>
+    <ul>
+      <li>Analytics providers continuously update entity databases. An address may be re-attributed to a newly-identified illicit entity retroactively. Document both scores with dates and investigate whether the new attribution is credible.</li>
+    </ul>
+
+    <h3>"Two tools return very different scores"</h3>
+    <ul>
+      <li>Vendor databases and hop-weighting methodologies genuinely differ. Use the more conservative score as your starting point, then apply human analyst review rather than averaging the numbers.</li>
+    </ul>
+
+    <div class="note">
+      <strong>Best debugging approach:</strong> Use the tool's transaction graph visualiser to trace the specific entities and paths generating the score. Turning "score = 74" into "this entity, this hop distance, this volume" makes an opaque number actionable.
+    </div>
+  </section>
+
+  <section class="eeat" id="eeat" aria-labelledby="eeat-title">
+    <h2 id="eeat-title">Wallet Audit: Sources &amp; Authoritative References</h2>
+
+    <div class="grid-2">
+      <div>
+        <h3>Regulatory standards</h3>
+        <ul>
+          <li><a href="https://www.fatf-gafi.org/en/publications/Fatfrecommendations/Recommendations.html" target="_blank" rel="noopener nofollow">FATF — The 40 Recommendations (Rec. 15: VASPs)</a></li>
+          <li><a href="https://www.fatf-gafi.org/en/publications/Fatfrecommendations/Guidance-RBA-virtual-assets-2021.html" target="_blank" rel="noopener nofollow">FATF — Risk-Based Approach for Virtual Assets (2021)</a></li>
+          <li><a href="https://www.fincen.gov/resources/statutes-regulations/guidance/application-fincens-regulations-certain-business-models" target="_blank" rel="noopener nofollow">FinCEN — BSA Application to Virtual Currency</a></li>
+          <li><a href="https://ofac.treasury.gov/sanctions-programs-and-country-information" target="_blank" rel="noopener nofollow">OFAC — Sanctions Programs &amp; SDN List</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Industry research &amp; analytics</h3>
+        <ul>
+          <li><a href="https://www.chainalysis.com/reports/crypto-crime-report/" target="_blank" rel="noopener nofollow">Chainalysis — 2024 Crypto Crime Report</a></li>
+          <li><a href="https://www.elliptic.co/resources" target="_blank" rel="noopener nofollow">Elliptic — Typologies Reports &amp; Methodology</a></li>
+          <li><a href="https://www.trmlabs.com/blog" target="_blank" rel="noopener nofollow">TRM Labs — Blockchain Intelligence Research</a></li>
+          <li><a href="https://crystalblockchain.com/resources/" target="_blank" rel="noopener nofollow">Crystal Blockchain — Compliance Resources</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Cryptocurrency_tumbler" target="_blank" rel="noopener nofollow">Wikipedia — Cryptocurrency Tumbler</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:1rem;">
+      <strong>About:</strong> Prepared by Crypto Finance Experts. Covers wallet audit methodology, on-chain risk categories, VASP legal obligations, tool comparison, and troubleshooting. Updated <time datetime="2026-03-18">March 18, 2026</time>. Not legal advice.
+    </div>
+  </section>
+
+  <section class="card faq-section" aria-labelledby="faq">
+    <h2 id="faq">Wallet Audit: Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f1" id="b1">
+        <h3>What is a crypto wallet audit?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f1" class="faq-content" role="region" aria-labelledby="b1">
+        <p>A crypto wallet audit is a structured compliance review of a blockchain address's on-chain transaction history. Using blockchain analytics tools, it traces fund flows to known entity clusters — exchanges, mixers, darknet markets, ransomware wallets, and OFAC-sanctioned addresses — and returns a risk score with a category breakdown.</p>
+        <p>VASPs use wallet audits to fulfil transaction monitoring obligations under FATF Recommendation 15. Individuals use them to understand the risk profile of funds they are about to receive or have already received. The output guides compliance decisions: proceed with standard monitoring, apply enhanced due diligence, or block the transaction and file a suspicious activity report.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f2" id="b2">
+        <h3>How long does a wallet audit take?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f2" class="faq-content" role="region" aria-labelledby="b2">
+        <p>An automated wallet audit via API returns results in under two seconds for most standard addresses. Manual dashboard audits take 2–5 minutes per address, including reading the category breakdown. Complex forensic audits — tracing fund flows across multiple hops, chains, and entity types — can take hours to days for trained analysts.</p>
+        <p>For VASP compliance purposes, real-time API integration is the practical standard. Manual checks cannot scale to hundreds or thousands of transactions per day without creating systematic coverage gaps and audit trail weaknesses.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f3" id="b3">
+        <h3>What does a wallet audit risk score mean?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f3" class="faq-content" role="region" aria-labelledby="b3">
+        <p>Risk scores are vendor-specific probability-weighted indicators of exposure to illicit activity — not verdicts of guilt. Scores are not standardised across providers: a 55/100 on Chainalysis is not comparable to a 55/100 on TRM Labs.</p>
+        <p>What matters is the category breakdown behind the score. A wallet scoring 70 due to indirect P2P exposure at four hops requires a very different response from a wallet scoring 70 due to direct mixer interaction. Always read the category breakdown first. The score is a summary; the breakdown is the actionable information.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f4" id="b4">
+        <h3>Is a wallet audit the same as KYC?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f4" class="faq-content" role="region" aria-labelledby="b4">
+        <p>No — they are complementary but distinct. KYC (Know Your Customer) verifies the identity of the person behind a wallet: collecting documents, matching them to a human or legal entity, and screening against sanctions lists at the identity level. A wallet audit assesses the on-chain transaction history of the address itself — regardless of who controls it.</p>
+        <p>A verified KYC customer can still transact through mixers or receive ransomware proceeds. A wallet audit catches those fund-flow risks. Effective compliance programmes run both: KYC at onboarding to establish identity, ongoing wallet audits at the transaction level to monitor fund-flow risk throughout the relationship.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f5" id="b5">
+        <h3>My wallet was flagged — what should I do?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f5" class="faq-content" role="region" aria-labelledby="b5">
+        <p>First, request the specific exposure category in writing. Ask whether it is sanctions, mixer, darknet, or another category — and at what hop distance. "Compliance system" alone is not an adequate explanation from a regulated entity.</p>
+        <p>Second, gather source-of-funds documentation relevant to the category flagged: exchange withdrawal records, bank statements, or OTC desk receipts. Third, run the address through a second analytics tool to verify whether the flag appears credible. If outputs diverge significantly between vendors, submit a formal dispute with your evidence. Most exchanges clear legitimate false positives within 5–10 business days when clear documentation is provided.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f6" id="b6">
+        <h3>Can a wallet audit produce false positives?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f6" class="faq-content" role="region" aria-labelledby="b6">
+        <p>Yes — false positives are an inherent feature of probabilistic heuristic clustering. Common scenarios: CoinJoin users whose privacy technique superficially resembles mixer activity; users withdrawing from large exchange hot wallets shared across thousands of customers (any illicit depositor to that exchange contributes indirect exposure to all withdrawers); and addresses in clusters that have been recently re-attributed to a newly-identified illicit entity without any change to the user's own on-chain activity.</p>
+        <p>This is why human analyst review before adverse action — not automated blocking on all medium scores — is the expected compliance standard. Tracking and reducing your false positive rate quarterly is a marker of a mature wallet audit programme.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f7" id="b7">
+        <h3>How often should a wallet be re-audited?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f7" class="faq-content" role="region" aria-labelledby="b7">
+        <p>For transactional relationships: audit in real time at every deposit and withdrawal. A wallet clean today can interact with a sanctioned entity tomorrow — onboarding-only audits miss all post-signup activity.</p>
+        <p>For existing user wallets: periodic batch re-auditing is standard — quarterly minimum for standard-risk users, more frequently for high-value accounts. Analytics providers update entity databases continuously; a previously-neutral address can be re-attributed to a newly-identified illicit cluster without any new on-chain activity from the user. Documenting each re-audit run demonstrates the ongoing monitoring obligation required by FATF Recommendation 15.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f8" id="b8">
+        <h3>Which wallet audit tool should I choose?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f8" class="faq-content" role="region" aria-labelledby="b8">
+        <p>Match the tool to your primary blockchain exposure, transaction volume, and integration needs. Chainalysis KYT is the market leader for large exchanges needing forensic quality and regulatory defensibility. Elliptic Navigator is stronger for DeFi and cross-chain protocols. TRM Labs covers 30+ chains at competitive pricing, making it a good fit for mid-market VASPs with diverse asset mixes. Crystal Blockchain is well-suited for Bitcoin-focused European VASPs with EU compliance reporting requirements.</p>
+        <p>Before committing, run a test batch through your shortlisted vendors and compare the category breakdowns on addresses with known profiles. Vendors who publish detailed methodology documentation tend to produce more defensible outputs in regulatory and legal contexts.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f9" id="b9">
+        <h3>Does a hardware wallet affect my wallet audit result?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f9" class="faq-content" role="region" aria-labelledby="b9">
+        <p>No — the type of wallet (hardware, software, custodial, or self-custody) has no effect on audit results. Risk scores are based entirely on on-chain transaction history. What wallet software you use to sign transactions is invisible to the blockchain; only the addresses and fund flows are visible.</p>
+        <p>What custody type does affect is regulatory treatment of the transfer itself. Transactions to or from unhosted (self-custody) wallets trigger additional obligations in many jurisdictions — VASPs typically must collect proof the customer controls the unhosted wallet and apply enhanced due diligence above the Travel Rule threshold. This is a parallel obligation to the wallet audit, not a replacement for it.</p>
+      </div>
+    </div>
+
+  </section>
+
+</article>
+</main>
+
+<footer class="container" role="contentinfo" style="padding:2rem 0;border-top:1px solid var(--line);margin-top:2rem">
+  <p class="muted">© 2026 Wallet Audit Guide. Educational content with compliance-first operational focus. Not legal advice. <time datetime="2026-03-18">March 18, 2026</time>.</p>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      const body = document.getElementById(btn.getAttribute('aria-controls'));
+      btn.setAttribute('aria-expanded', String(!open));
+      btn.querySelector('.faq-plus').textContent = open ? '+' : '−';
+      body.style.maxHeight = open ? '0' : body.scrollHeight + 'px';
+      body.classList.toggle('open', !open);
+    });
+  });
+</script>
+
+</body>
+</html>
